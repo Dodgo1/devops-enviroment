@@ -14,7 +14,7 @@ services:
       - docker_network
   sonarqube:
     image: sonarqube:lts-community
-    container_name: sonarqube-env
+    container_name: sonarqube-envdocker
     ports:
       - "9000:9000"
     volumes:
@@ -23,6 +23,26 @@ services:
       - ./volumes/sonar/sonarqube_logs:/opt/sonarqube/logs
     networks:
       - docker_network
+  selenium:
+    image: selenium/hub
+    container_name: selenium-env
+    ports:
+    - "4442:4442"
+    - "4443:4443"
+    - "4444:4444"
+    networks:
+    - docker_network
+  firefox:
+    image: selenium/node-firefox
+    container_name: firefox-env
+    depends_on:
+    - selenium
+    environment:
+    - SE_EVENT_BUS_HOST=selenium-env
+    - SE_EVENT_BUS_PUBLISH_PORT=4442
+    - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    networks:
+    - docker_network
 
 networks:
   docker_network:
